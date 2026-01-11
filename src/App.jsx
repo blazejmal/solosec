@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, MotionConfig } from "framer-motion";
 import {
   ArrowRight,
   BadgeCheck,
@@ -61,7 +61,8 @@ const UI = {
   card: "rounded-2xl bg-zinc-900/70 border border-zinc-800/60 text-zinc-50 shadow-md shadow-black/20",
   cardStrong:
     "rounded-2xl bg-zinc-900/70 border border-zinc-800/60 text-zinc-50 shadow-md shadow-black/20",
-  panel: "rounded-2xl bg-zinc-900/70 border border-zinc-800/60 shadow-md shadow-black/20",
+  panel:
+    "rounded-2xl bg-zinc-900/70 border border-zinc-800/60 shadow-md shadow-black/20",
   chip: "grid place-items-center rounded-2xl bg-zinc-950/10 border border-zinc-800/60",
 
   // Inputs
@@ -72,7 +73,7 @@ const UI = {
 
   // Premium "glass" outline button.
   button:
-    "rounded-2xl border border-zinc-700/70 bg-zinc-950/10 text-sm font-medium tracking-tight text-zinc-50/90 backdrop-blur shadow-sm shadow-black/20 transition-all duration-200 hover:bg-zinc-900/35 hover:border-zinc-600/80 hover:text-zinc-50 focus-visible:ring-2 focus-visible:ring-lime-400/20 focus-visible:ring-offset-0 active:translate-y-px",
+    "rounded-2xl border border-zinc-700/70 bg-zinc-950/10 text-sm font-semibold tracking-tight text-zinc-50 backdrop-blur shadow-sm shadow-black/20 transition-all duration-200 hover:bg-zinc-900/35 hover:border-zinc-600/80 hover:text-zinc-50 focus-visible:ring-2 focus-visible:ring-lime-400/20 focus-visible:ring-offset-0 active:translate-y-px",
 
   // Small "pill" tags (used in footer areas).
   pill:
@@ -88,6 +89,8 @@ const motionStagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } },
 };
+
+const springButton = { type: "spring", stiffness: 520, damping: 34, mass: 0.65 };
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
@@ -112,6 +115,10 @@ function isValidEmail(email) {
   console.assert(isValidEmail("a@b") === false, "Expected invalid email without TLD");
   console.assert(isValidEmail(" a@b.com ") === true, "Expected trimming to work");
   console.assert(isValidEmail("") === false, "Expected empty email to be invalid");
+  console.assert(
+    isValidEmail("name@domain.toolongtld") === true,
+    "Expected long TLD to still be valid"
+  );
 })();
 
 export default function CyberSoloAgencyLanding() {
@@ -126,7 +133,11 @@ export default function CyberSoloAgencyLanding() {
         title: "Audyt i QuickScan",
         description:
           "Szybka diagnoza ryzyk i plan naprawczy: MFA, backup, uprawnienia, konfiguracje, logging.",
-        bullets: ["Raport + Top 20 działań", "Backlog z priorytetami", "Spotkanie podsumowujące"],
+        bullets: [
+          "Raport + Top 20 działań",
+          "Backlog z priorytetami",
+          "Spotkanie podsumowujące",
+        ],
       },
       {
         icon: Shield,
@@ -302,7 +313,8 @@ export default function CyberSoloAgencyLanding() {
   );
 
   return (
-    <div className={UI.page}>
+    <MotionConfig reducedMotion="never">
+      <div className={UI.page}>
       <div className={UI.pageWash} />
 
       {/* Premium "Kali" glow + subtle noise */}
@@ -340,15 +352,27 @@ export default function CyberSoloAgencyLanding() {
             <a className={cn("text-sm", UI.subtleText, "hover:text-lime-300")} href="#pakiety">
               Pakiety
             </a>
-            <a className={cn("text-sm", UI.subtleText, "hover:text-lime-300")} href="#jak-pracuje">
+            <a
+              className={cn("text-sm", UI.subtleText, "hover:text-lime-300")}
+              href="#jak-pracuje"
+            >
               Jak pracuję
             </a>
             <a className={cn("text-sm", UI.subtleText, "hover:text-lime-300")} href="#faq">
               FAQ
             </a>
-            <Button asChild size="sm" variant="outline" className={UI.button}>
-              <a href="#kontakt">Bezpłatna konsultacja</a>
-            </Button>
+            <motion.div
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.99 }}
+              transition={springButton}
+              className="inline-flex"
+            >
+              <Button asChild size="sm" variant="outline" className={UI.button}>
+                <a href="#kontakt" className="font-semibold tracking-tight">
+                  Bezpłatna konsultacja
+                </a>
+              </Button>
+            </motion.div>
           </nav>
 
           <div className="md:hidden">
@@ -370,7 +394,8 @@ export default function CyberSoloAgencyLanding() {
             className="space-y-6"
           >
             <motion.div variants={motionFadeUp} className="flex flex-wrap items-center gap-2">
-              <Badge className="rounded-2xl">Audyt → Wdrożenia → Utrzymanie</Badge></motion.div>
+              <span className={UI.pill}>Audyt → Wdrożenia → Utrzymanie</span>
+            </motion.div>
 
             <motion.h1
               variants={motionFadeUp}
@@ -383,19 +408,38 @@ export default function CyberSoloAgencyLanding() {
               variants={motionFadeUp}
               className={cn("text-base leading-relaxed md:text-lg", UI.subtleText)}
             >
-              Pomagam firmom MŚP zmniejszać ryzyko phishingu, ransomware i wycieków danych. Zaczynamy od szybkiej diagnozy,
-              przechodzimy do konkretnych wdrożeń i kończymy na stałej opiece (vCISO).
+              Pomagamy małym i średnim przedsiębiorstwom zmniejszać ryzyko phishingu, ransomware czy wycieków danych.
+              Zaczynamy od szybkiej diagnozy, przechodzimy do konkretnych wdrożeń i kończymy na stałej opiece (vCISO).
             </motion.p>
 
-            <motion.div variants={motionFadeUp} className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button asChild variant="outline" className={UI.button}>
-                <a href="#kontakt">
-                  Umów rozmowę <ArrowRight className="ml-2 h-4 w-4 opacity-90" aria-hidden="true" />
-                </a>
-              </Button>
-              <Button asChild variant="outline" className={UI.button}>
-                <a href="#pakiety">Zobacz pakiety</a>
-              </Button>
+            <motion.div
+              variants={motionFadeUp}
+              className="flex flex-col gap-3 sm:flex-row sm:items-center"
+            >
+              <motion.div
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.99 }}
+                transition={springButton}
+                className="inline-flex"
+              >
+                <Button asChild variant="outline" className={UI.button}>
+                  <a href="#kontakt" className="font-semibold tracking-tight">
+                    Umów rozmowę <ArrowRight className="ml-2 h-4 w-4 opacity-90" aria-hidden="true" />
+                  </a>
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.99 }}
+                transition={springButton}
+                className="inline-flex"
+              >
+                <Button asChild variant="outline" className={UI.button}>
+                  <a href="#pakiety" className="font-semibold tracking-tight">
+                    Zobacz pakiety
+                  </a>
+                </Button>
+              </motion.div>
             </motion.div>
 
             <motion.div
@@ -405,9 +449,11 @@ export default function CyberSoloAgencyLanding() {
               {kpis.map((k) => (
                 <Card key={k.label} className={UI.card}>
                   <CardContent className="p-4">
-                    <div className="text-xs text-zinc-300/80">{k.label}</div>
-                    <div className="mt-1 text-xl font-semibold tracking-tight text-zinc-50">{k.value}</div>
-                    <div className="mt-1 text-xs text-zinc-300/80">{k.note}</div>
+                    <div className={cn("text-xs", UI.subtleText)}>{k.label}</div>
+                    <div className="mt-1 text-xl font-semibold tracking-tight text-zinc-50">
+                      {k.value}
+                    </div>
+                    <div className={cn("mt-1 text-xs", UI.subtleText)}>{k.note}</div>
                   </CardContent>
                 </Card>
               ))}
@@ -422,10 +468,10 @@ export default function CyberSoloAgencyLanding() {
             className="relative"
           >
             <Card className={cn(UI.card, "overflow-hidden")}>
-              <CardHeader className={cn("border-b border-zinc-700/70", UI.mutedBorder)}>
-                <CardTitle className="flex items-center gap-2 text-base">
+              <CardHeader className={cn("border-b", UI.mutedBorder)}>
+                <CardTitle className="flex items-center gap-2 text-base font-semibold tracking-tight">
                   <Zap className="h-4 w-4" aria-hidden="true" />
-                  Najczęstsze ryzyka w MŚP
+                  Najczęstsze ryzyka
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -452,7 +498,7 @@ export default function CyberSoloAgencyLanding() {
                       desc: "Zbyt szerokie udostępnienia, brak logów i kontroli gości.",
                     },
                   ].map((r) => (
-                    <div key={r.title} className={cn(UI.panel, "flex items-start gap-3 p-4")}>
+                    <div key={r.title} className={cn(UI.card, "flex items-start gap-3 p-4")}>
                       <div className={cn(UI.chip, "h-9 w-9")}>
                         <r.icon className="h-5 w-5" aria-hidden="true" />
                       </div>
@@ -464,13 +510,14 @@ export default function CyberSoloAgencyLanding() {
                   ))}
                 </div>
 
-                <div className={cn(UI.panel, "mt-6 p-4")}>
+                <div className={cn(UI.card, "mt-6 p-4")}>
                   <div className="flex items-center gap-2 text-sm font-medium">
                     <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                     Cel: szybkie zwycięstwa w 30 dni
                   </div>
                   <p className={cn("mt-2 text-sm", UI.subtleText)}>
-                    Najpierw rzeczy o największym wpływie: MFA, backup, uprawnienia i poczta. Dopiero potem „ładne papierki”.
+                    Najpierw rzeczy o największym wpływie: MFA, backup, uprawnienia i poczta. Dopiero potem „ładne
+                    papierki”.
                   </p>
                 </div>
               </CardContent>
@@ -513,7 +560,9 @@ export default function CyberSoloAgencyLanding() {
         >
           <motion.div variants={motionFadeUp} className="space-y-2">
             <div className={cn("text-sm font-medium", UI.subtleText)}>Oferta</div>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Usługi, które da się dowieźć solo</h2>
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+              Usługi, które da się dowieźć solo
+            </h2>
             <p className={cn("max-w-2xl text-sm leading-relaxed md:text-base", UI.subtleText)}>
               Konkretny zakres, konkretne wyniki. Bez obietnic „będziemy bezpieczni na 100%” — tylko mierzalna redukcja
               ryzyka.
@@ -525,13 +574,12 @@ export default function CyberSoloAgencyLanding() {
               <motion.div key={s.title} variants={motionFadeUp}>
                 <Card className={cn(UI.card, "h-full")}>
                   <CardHeader className="space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-2">
-                        <div className={cn(UI.chip, "h-10 w-10")}>
-                          <s.icon className="h-5 w-5" aria-hidden="true" />
-                        </div>
-                        <CardTitle className="text-base">{s.title}</CardTitle>
-                      </div></div>
+                    <div className="flex items-center gap-2">
+                      <div className={cn(UI.chip, "h-10 w-10")}>
+                        <s.icon className="h-5 w-5" aria-hidden="true" />
+                      </div>
+                      <CardTitle className="text-base">{s.title}</CardTitle>
+                    </div>
                     <p className={cn("text-sm", UI.subtleText)}>{s.description}</p>
                   </CardHeader>
                   <CardContent className="space-y-2">
@@ -555,7 +603,9 @@ export default function CyberSoloAgencyLanding() {
           <div className="grid gap-10 md:grid-cols-2 md:items-end">
             <div className="space-y-2">
               <div className={cn("text-sm font-medium", UI.subtleText)}>Pakiety</div>
-              <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Proste pakiety, jasny efekt</h2>
+              <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+                Proste pakiety, jasny efekt
+              </h2>
               <p className={cn("max-w-2xl text-sm md:text-base", UI.subtleText)}>
                 Widełki cenowe zależą od liczby użytkowników/urządzeń i złożoności środowiska. Zawsze dostajesz zakres i
                 deliverables przed startem.
@@ -666,7 +716,7 @@ export default function CyberSoloAgencyLanding() {
                   { icon: Radar, title: "Widoczność", desc: "logi, alerty i podstawowe KPI" },
                   { icon: GraduationCap, title: "Nawyki", desc: "szkolenia i ćwiczenia dla zespołu" },
                 ].map((x) => (
-                  <div key={x.title} className={cn(UI.panel, "flex items-start gap-3 p-4")}>
+                  <div key={x.title} className={cn(UI.card, "flex items-start gap-3 p-4")}>
                     <div className={cn(UI.chip, "h-9 w-9")}>
                       <x.icon className="h-5 w-5" aria-hidden="true" />
                     </div>
@@ -947,6 +997,7 @@ export default function CyberSoloAgencyLanding() {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </MotionConfig>
   );
 }
