@@ -434,7 +434,7 @@ export default function CyberSoloAgencyLanding() {
                     {
                       icon: Mail,
                       title: "Phishing i BEC",
-                      desc: "Brak MFA, słabe zasady poczty, brak DMARC.",
+                      desc: "Brak MFA, brak regulacji poczty, brak DMARC.",
                     },
                     {
                       icon: Server,
